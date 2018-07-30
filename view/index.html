@@ -72,7 +72,9 @@
 			let nowReqPath = "";
 			let nowReqTime = Date.now();
 			let nowRes;
-			const isLocal = new RegExp("^\/" + document.domain);
+			const isLocal = new RegExp("^\/\/?" + document.domain);
+
+			let contentHTML = document.getElementById("content");
 
 			window.addEventListener("mouseover", async (ev) => {
 				if (ev.target.tagName == "A") {
@@ -86,8 +88,7 @@
 								nowReqTime = Date.now();
 							}
 							if (XHR.readyState == 4 && XHR.status == 200) {
-								console.log(XHR.responseText);
-								nowRes = XHR.responseXML;
+								nowRes = XHR.responseText;
 							}
 						};
 						XHR.send();
@@ -96,13 +97,8 @@
 			});
 
 			window.addEventListener("click", async (ev) => {
-				if (ev.target.tagName == "A") {
-					let path = ev.target.href.slice(ev.target.protocol.length + 1);
-					if (path == nowReqPath) {
-						if (nowRes != null) { // 既にレスポンスがあったとき
-							console.log(nowRes);
-						}
-					}
+				if (ev.button == 0 && ev.target.tagName == "A") {
+					console.log(nowRes);
 				}
 			});
 		};
@@ -116,7 +112,7 @@
 		</div>
 	</div>
 	<div id="main">
-		<div><a href="/aiueo">aiueo</a></div>
+		<div id="content"><a href="/aiueo">aiueo</a></div>
 	</div>
 </body>
 </html>

@@ -14,7 +14,7 @@ func main() {
 func router(w http.ResponseWriter, r *http.Request) {
 	r.ParseForm()
 	if r.Form.Get("e") == "e" {
-		w.Write([]byte("必要な情報だけを返します"))
+		w.Write([]byte("<p>hogehoge</p>"))
 	} else {
 		b, _ := ioutil.ReadFile("view/index.html")
 		w.Write(b)
