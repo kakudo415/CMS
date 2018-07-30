@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+	<meta charset="UTF-8">
+	<title>[TITLE]</title>
+	<style>
+		html {
+			height: 100%;
+			font: normal normal normal 14px / 1em sans-serif;
+		}
+		body {
+			height: 100%;
+			margin: 0;
+			padding: 0;
+		}
+		div {
+			box-sizing: border-box;
+		}
+		a {
+			display: inline-block;
+			text-decoration: none;
+		}
+		#header {
+			width: 100%;
+			padding: 0 1rem;
+			position: fixed;
+			top: 0;
+			background: #000A;
+		}
+		#header>div {
+			height: 3rem;
+			width: 100%;
+			margin: 0 auto;
+			display: flex;
+			align-items: center;
+		}
+		#header>div>a {
+			color: #FFFC;
+		}
+		#main {
+			min-height: 100%;
+			padding: 3rem 0 0;
+			background: #F5F5F5;
+		}
+		#main>div {
+			width: 100%;
+			margin: 0 auto;
+		}
+		@media screen and (min-width: 480px) {
+			html {
+				font: normal normal normal 16px / 1em sans-serif;
+			}
+			#main {
+				padding: 4rem 1rem 1rem;
+			}
+		}
+		@media screen and (min-width: 960px) {
+			#header>div {
+				width: calc(960px - 2rem);
+			}
+			#main {
+				padding: 4rem 0 1rem;
+			}
+			#main>div {
+				width: calc(960px - 2rem);
+			}
+		}
+	</style>
+	<script>
+		window.onload = () => {
+			let XHR = new XMLHttpRequest();
+			let nowReqPath;
+			let nowReqTime = Date.now();
+			let nowRes;
+			const isLocal = new RegExp("^\/\/" + document.domain);
+
+			window.addEventListener("mouseover", async (ev) => {
+				if (ev.target.tagName == "A") {
+					let path = ev.target.href.slice(ev.target.protocol.length + 1);
+					console.log(path+"?e=e");
+					if (nowReqPath != path && (nowReqTime + 50) < Date.now()) { // ローカルパスへのアクセスか、同じパスにアクセスしていないか、前回の通信から50ms以上経過したか
+						XHR.abort();
+						XHR.open("GET", path+"?e=e", true);
+						XHR.onreadystatechange = () => {
+							if (this.readyState == 4 && this.status == 200) {
+								console.log(this.responseText);
+								nowRes = XHR.responseXML;
+							}
+						};
+						XHR.send();
+						console.log("!!!");
+						nowReqPath = path;
+						nowReqTime = Date.now();
+					}
+				}
+			});
+
+			window.addEventListener("click", async (ev) => {
+				if (ev.target.tagName == "A") {
+					let path = ev.target.href.slice(ev.target.protocol.length + 1);
+					if (path == nowReqPath) {
+						if (nowRes != null) { // 既にレスポンスがあったとき
+							console.log(nowRes);
+						} else {
+							await Object.observe(nowRes, () => { // nowResを監視して、変更を確認後に描画する
+								console.log(nowRes);
+							});
+						}
+					}
+				}
+			});
+		};
+	</script>
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+</head>
+<body>
+	<div id="header">
+		<div>
+			<a href="/" style="margin: 0 auto 0 0">技術ブログ</a>
+		</div>
+	</div>
+	<div id="main">
+		<div>CONTENT</div>
+	</div>
+</body>
+</html>
