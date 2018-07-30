@@ -69,28 +69,28 @@
 	<script>
 		window.onload = () => {
 			let XHR = new XMLHttpRequest();
-			let nowReqPath;
+			let nowReqPath = "";
 			let nowReqTime = Date.now();
 			let nowRes;
-			const isLocal = new RegExp("^\/\/" + document.domain);
+			const isLocal = new RegExp("^\/" + document.domain);
 
 			window.addEventListener("mouseover", async (ev) => {
 				if (ev.target.tagName == "A") {
 					let path = ev.target.href.slice(ev.target.protocol.length + 1);
-					console.log(path+"?e=e");
-					if (nowReqPath != path && (nowReqTime + 50) < Date.now()) { // ローカルパスへのアクセスか、同じパスにアクセスしていないか、前回の通信から50ms以上経過したか
+					if (path.match(isLocal) && nowReqPath != path && (nowReqTime + 50) < Date.now()) { // ローカルパスへのアクセスか、同じパスにアクセスしていないか、前回の通信から50ms以上経過したか
 						XHR.abort();
-						XHR.open("GET", path+"?e=e", true);
+						XHR.open("GET", path + "?e=e", true);
 						XHR.onreadystatechange = () => {
-							if (this.readyState == 4 && this.status == 200) {
-								console.log(this.responseText);
+							if (XHR.readyState == 2) {
+								nowReqPath = path;
+								nowReqTime = Date.now();
+							}
+							if (XHR.readyState == 4 && XHR.status == 200) {
+								console.log(XHR.responseText);
 								nowRes = XHR.responseXML;
 							}
 						};
 						XHR.send();
-						console.log("!!!");
-						nowReqPath = path;
-						nowReqTime = Date.now();
 					}
 				}
 			});
@@ -101,10 +101,6 @@
 					if (path == nowReqPath) {
 						if (nowRes != null) { // 既にレスポンスがあったとき
 							console.log(nowRes);
-						} else {
-							await Object.observe(nowRes, () => { // nowResを監視して、変更を確認後に描画する
-								console.log(nowRes);
-							});
 						}
 					}
 				}
@@ -120,7 +116,7 @@
 		</div>
 	</div>
 	<div id="main">
-		<div>CONTENT</div>
+		<div><a href="/aiueo">aiueo</a></div>
 	</div>
 </body>
 </html>
