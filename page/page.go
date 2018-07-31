@@ -33,7 +33,7 @@ func Full(w http.ResponseWriter, r *http.Request) {
 // Essence data
 func Essence(w http.ResponseWriter, r *http.Request) {
 	if r.URL.Path == "/" {
-		w.Write([]byte("<!DOCTYPE><head><title>404</title></head><body><h1>404</h1></body>"))
+		w.Write([]byte("<!DOCTYPE html><head><title>404</title></head><body><h1>404</h1></body>"))
 		return
 	}
 	content, title := parseArticle(r.URL.Path)
