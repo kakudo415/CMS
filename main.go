@@ -17,7 +17,7 @@ func router(w http.ResponseWriter, r *http.Request) {
 	r.ParseForm()
 	if r.Form.Get("e") == "e" {
 		time.Sleep(time.Second * 1)
-		w.Write([]byte("<p>hogehoge</p>"))
+		w.Write([]byte("<!DOCTYPE html><head><title>hogehoge</title></head><body><p>hogehoge</p></body>"))
 	} else {
 		b, _ := ioutil.ReadFile("view/index.html")
 		w.Write(b)

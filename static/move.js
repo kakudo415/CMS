@@ -3,6 +3,8 @@
 // if (history.pushState && history.state !== undefined)
 
 window.onload = () => {
+	let contentHTML = document.getElementById("content");
+
 	let Ajax = {
 		XHR: new XMLHttpRequest(),
 		Path: "",
@@ -10,14 +12,14 @@ window.onload = () => {
 		Data: ""
 	};
 
-	const mouseOver = async (ev) => {
+	const mouseOver = (ev) => {
 		ajaxGET(ev.target.href);
 	};
 
-	const mouseDown = async (ev) => {
+	const mouseDown = (ev) => {
 		let count = 0;
 		let timer = setInterval(() => {
-			if (Ajax.Data.length > 0) {
+			if (Ajax.Path == ev.target.href) {
 				movePage();
 				clearTimeout(timer);
 			}
@@ -29,23 +31,23 @@ window.onload = () => {
 		}, 10);
 	};
 
-	const ajaxGET = (url) => {
+	const ajaxGET = async (url) => {
 		if (Ajax.Path != url && (Ajax.Time + 100) < Date.now()) {
-			Ajax.XHR.abort();
-			Ajax.XHR.open("GET", url + "?e=e", true);
-			Ajax.XHR.onloadstart = (ev) => {
-				Ajax.Data = "";
-			};
+			await Ajax.XHR.abort();
+			Ajax.XHR.responseType = "document";
 			Ajax.XHR.onload = (ev) => {
 				Ajax.Path = url;
 				Ajax.Time = Date.now();
-				Ajax.Data = ev.target.responseText;
+				Ajax.Data = ev.target.responseXML;
 			};
+			Ajax.XHR.open("GET", url + "?e=e", true);
 			Ajax.XHR.send();
 		}
 	};
 
 	const movePage = () => {
+		document.title = Ajax.Data.title;
+		contentHTML.innerHTML = Ajax.Data.body.innerHTML;
 		history.pushState(null, null, Ajax.Path);
 	};
 
