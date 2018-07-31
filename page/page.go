@@ -6,6 +6,10 @@ import (
 	"net/http"
 	"regexp"
 
+	"github.com/tdewolff/minify"
+	"github.com/tdewolff/minify/css"
+	"github.com/tdewolff/minify/html"
+
 	"github.com/russross/blackfriday"
 )
 
@@ -13,21 +17,17 @@ var indexHTML []byte
 
 var headerRegex = regexp.MustCompile(`# .+`)
 
+var min = minify.New()
+
 // Full Page Handler
 func Full(w http.ResponseWriter, r *http.Request) {
-	if r.URL.Path == "/" {
-		w.Write(indexHTML)
-		return
-	}
 	view := indexHTML
-	title, content := parseArticle(r.URL.Path)
-	view = bytes.Replace(view, []byte("[TITLE]"), title, 1)
-	view = bytes.Replace(view, []byte("[BODY]"), content, 1)
-	if len(view) > 0 {
-		w.Write(view)
-	} else {
-		w.WriteHeader(404)
+	if r.URL.Path != "/" {
+		title, content := parseArticle(r.URL.Path)
+		view = bytes.Replace(view, []byte("[TITLE]"), title, 1)
+		view = bytes.Replace(view, []byte("[BODY]"), content, 1)
 	}
+	min.Minify("text/html", w, bytes.NewReader(view))
 }
 
 // Essence data
@@ -37,7 +37,7 @@ func Essence(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	title, content := parseArticle(r.URL.Path)
-	w.Write(render(title, content))
+	min.Minify("text/html", w, bytes.NewReader(render(title, content)))
 }
 
 func parseArticle(filename string) ([]byte, []byte) {
@@ -68,4 +68,7 @@ func init() {
 	if err != nil {
 		panic(err)
 	}
+
+	min.AddFunc("text/html", html.Minify)
+	min.AddFunc("text/css", css.Minify)
 }
