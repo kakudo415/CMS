@@ -66,43 +66,9 @@
 			}
 		}
 	</style>
-	<script>
-		window.onload = () => {
-			let XHR = new XMLHttpRequest();
-			let nowReqPath = "";
-			let nowReqTime = Date.now();
-			let nowRes;
-			const isLocal = new RegExp("^\/\/?" + document.domain);
+	
+	<script src="static/move.js" defer="defer"></script>
 
-			let contentHTML = document.getElementById("content");
-
-			window.addEventListener("mouseover", async (ev) => {
-				if (ev.target.tagName == "A") {
-					let path = ev.target.href.slice(ev.target.protocol.length + 1);
-					if (path.match(isLocal) && nowReqPath != path && (nowReqTime + 50) < Date.now()) { // ローカルパスへのアクセスか、同じパスにアクセスしていないか、前回の通信から50ms以上経過したか
-						XHR.abort();
-						XHR.open("GET", path + "?e=e", true);
-						XHR.onreadystatechange = () => {
-							if (XHR.readyState == 2) {
-								nowReqPath = path;
-								nowReqTime = Date.now();
-							}
-							if (XHR.readyState == 4 && XHR.status == 200) {
-								nowRes = XHR.responseText;
-							}
-						};
-						XHR.send();
-					}
-				}
-			});
-
-			window.addEventListener("click", async (ev) => {
-				if (ev.button == 0 && ev.target.tagName == "A") {
-					console.log(nowRes);
-				}
-			});
-		};
-	</script>
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
 </head>
 <body>
@@ -112,7 +78,9 @@
 		</div>
 	</div>
 	<div id="main">
-		<div id="content"><a href="/aiueo">aiueo</a></div>
+		<div id="content">
+			<a href="/aiueo">aiueo</a>
+		</div>
 	</div>
 </body>
 </html>
