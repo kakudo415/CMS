@@ -17,18 +17,20 @@ window.onload = () => {
 	};
 
 	const mouseDown = (ev) => {
-		let count = 0;
-		let timer = setInterval(() => {
-			if (Ajax.Path == ev.target.href) {
-				movePage();
-				clearTimeout(timer);
-			}
-			count++;
-			if (count > 300) {
-				clearTimeout(timer);
-				location.href = Ajax.Path;
-			}
-		}, 10);
+		if (ev.button == 0) {
+			let count = 0;
+			let timer = setInterval(() => {
+				if (Ajax.Path == ev.target.href) {
+					movePage();
+					clearTimeout(timer);
+				}
+				count++;
+				if (count > 300) {
+					clearTimeout(timer);
+					location.href = Ajax.Path;
+				}
+			}, 10);
+		}
 	};
 
 	const ajaxGET = async (url) => {
