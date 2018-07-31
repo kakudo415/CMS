@@ -41,7 +41,7 @@ func Essence(w http.ResponseWriter, r *http.Request) {
 }
 
 func parseArticle(filename string) ([]byte, []byte) {
-	file, err := ioutil.ReadFile("md/" + filename + ".md")
+	file, err := ioutil.ReadFile("Content/" + filename + ".md")
 	if err != nil {
 		return []byte{}, []byte("404")
 	}
