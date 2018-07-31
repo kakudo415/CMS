@@ -13,23 +13,29 @@ window.onload = () => {
 	};
 
 	const mouseOver = (ev) => {
-		ajaxGET(ev.target.href);
+		if (isLocal(ev.target.href)) {
+			ajaxGET(ev.target.href);
+		}
 	};
 
 	const mouseDown = (ev) => {
 		if (ev.button == 0) {
-			let count = 0;
-			let timer = setInterval(() => {
-				if (Ajax.Path == ev.target.href) {
-					movePage();
-					clearTimeout(timer);
-				}
-				count++;
-				if (count > 300) {
-					clearTimeout(timer);
-					location.href = Ajax.Path;
-				}
-			}, 10);
+			if (isLocal(ev.target.href)) {
+				let count = 0;
+				let timer = setInterval(() => {
+					if (Ajax.Path == ev.target.href && Ajax.Data != null) {
+						movePage();
+						clearTimeout(timer);
+					}
+					count++;
+					if (count > 300) {
+						clearTimeout(timer);
+						location.href = Ajax.Path;
+					}
+				}, 10);
+			} else {
+				location.href = ev.target.href;
+			}
 		}
 	};
 
@@ -51,6 +57,10 @@ window.onload = () => {
 		document.title = Ajax.Data.title;
 		contentHTML.innerHTML = Ajax.Data.body.innerHTML;
 		history.pushState(null, null, Ajax.Path);
+	};
+
+	const isLocal = (URL) => {
+		return URL.startsWith("http://" + document.domain) || URL.startsWith("https://" + document.domain) || URL.startsWith("//" + document.domain) || URL.startsWith("/");
 	};
 
 	for (let tag of document.getElementsByTagName("a")) {
