@@ -32,7 +32,7 @@ func main() {
 }
 
 func accessLog(r *http.Request) {
-	log.Printf("%s => %s %s", r.RemoteAddr, r.Method, r.URL.Path)
+	log.Printf("%s => %s %s\n", r.RemoteAddr, r.Method, r.URL.Path)
 }
 
 func init() {
