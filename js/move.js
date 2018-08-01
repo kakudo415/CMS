@@ -13,17 +13,18 @@ window.onload = () => {
 	};
 
 	const mouseOver = (ev) => {
+		console.log(ev.target.href);
 		if (isLocal(ev.target.href)) {
 			ajaxGET(ev.target.href);
 		}
 	};
 
 	const mouseDown = (ev) => {
-		if (ev.button == 0) {
+		if (ev.button === 0) {
 			if (isLocal(ev.target.href)) {
 				let count = 0;
 				let timer = setInterval(() => {
-					if (Ajax.Path == ev.target.href && Ajax.Data != null) {
+					if (Ajax.Path === ev.target.href && Ajax.Data !== null) {
 						movePage();
 						clearTimeout(timer);
 					}
@@ -39,8 +40,12 @@ window.onload = () => {
 		}
 	};
 
+	const popState = (ev) => {
+		console.log(ev);
+	};
+
 	const ajaxGET = async (url) => {
-		if (Ajax.Path != url && (Ajax.Time + 100) < Date.now()) {
+		if (Ajax.Path !== url && (Ajax.Time + 100) < Date.now()) {
 			await Ajax.XHR.abort();
 			Ajax.XHR.responseType = "document";
 			Ajax.XHR.onload = (ev) => {
@@ -68,4 +73,5 @@ window.onload = () => {
 		tag.onmousedown = mouseDown;
 		tag.onclick = () => { return false };
 	}
+	window.onpopstate = popState;
 };

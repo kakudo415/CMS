@@ -4,7 +4,10 @@ import (
 	"bytes"
 	"io/ioutil"
 	"net/http"
+	"path/filepath"
 	"regexp"
+	"strings"
+	"unicode/utf8"
 
 	"github.com/tdewolff/minify"
 	"github.com/tdewolff/minify/css"
@@ -22,26 +25,30 @@ var min = minify.New()
 // Full Page Handler
 func Full(w http.ResponseWriter, r *http.Request) {
 	view := indexHTML
-	if r.URL.Path != "/" {
-		title, content := parseArticle(r.URL.Path)
-		view = bytes.Replace(view, []byte("[TITLE]"), title, 1)
-		view = bytes.Replace(view, []byte("[BODY]"), content, 1)
+	var title, content []byte
+	if r.URL.Path == "/" {
+		title, content = []byte("Kakudo's Blog"), list("Content")
+	} else {
+		title, content = parseArticle(r.URL.Path)
 	}
+	view = bytes.Replace(view, []byte("[TITLE]"), title, 1)
+	view = bytes.Replace(view, []byte("[BODY]"), content, 1)
 	min.Minify("text/html", w, bytes.NewReader(view))
 }
 
 // Essence data
 func Essence(w http.ResponseWriter, r *http.Request) {
+	var title, content []byte
 	if r.URL.Path == "/" {
-		w.Write(render([]byte("404"), []byte("<h1>404</h1><h2>Not Found</h2>")))
-		return
+		title, content = []byte("Kakudo's Blog"), list("Content")
+	} else {
+		title, content = parseArticle(r.URL.Path)
 	}
-	title, content := parseArticle(r.URL.Path)
 	min.Minify("text/html", w, bytes.NewReader(render(title, content)))
 }
 
 func parseArticle(filename string) ([]byte, []byte) {
-	file, err := ioutil.ReadFile("Content/" + filename + ".md")
+	file, err := ioutil.ReadFile(filepath.Clean("Content/" + filename + ".md"))
 	if err != nil {
 		return []byte{}, []byte("404")
 	}
@@ -60,6 +67,39 @@ func render(title, body []byte) (html []byte) {
 	html = append(html, body...)
 	html = append(html, []byte("</body></html>")...)
 	return html
+}
+
+func list(d string) (l []byte) {
+	files, _ := ioutil.ReadDir(d)
+	for _, file := range files {
+		p := filepath.Join(d, file.Name())
+		p = trimExt(strings.TrimPrefix(p, "Content\\"))
+		if file.IsDir() {
+			l = append(l, list(p)...)
+		} else {
+			t, c := parseArticle(string(p))
+			var wrapUp string
+			if utf8.RuneCount(c) > 100 {
+				wrapUp = string([]rune(string(c))[:100])
+			} else {
+				wrapUp = string([]rune(string(c))[:utf8.RuneCount(c)])
+			}
+			wrapUp = strings.TrimPrefix(removeTag(wrapUp), string(t))
+			wrapUp = string([]rune(wrapUp)[utf8.RuneCount(t):])
+			l = append(l, []byte(`<a href="/`+trimExt(file.Name())+`"><h1>`+string(t)+`</h1><span>`+wrapUp+`</span></a>`)...)
+		}
+	}
+	return l
+}
+
+func removeTag(str string) string {
+	rep := regexp.MustCompile(`<("[^"]*"|'[^']*'|[^'">])*>`)
+	str = rep.ReplaceAllString(str, "")
+	return str
+}
+
+func trimExt(p string) string {
+	return strings.TrimSuffix(p, filepath.Ext(p))
 }
 
 func init() {
