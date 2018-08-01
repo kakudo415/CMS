@@ -51,7 +51,7 @@ func Essence(w http.ResponseWriter, r *http.Request) {
 }
 
 func parseArticle(filename string) ([]byte, []byte) {
-	file, err := ioutil.ReadFile(filepath.Clean("Content/" + filename + ".md"))
+	file, err := ioutil.ReadFile(filepath.Clean("Content" + filename + ".md"))
 	if err != nil {
 		fmt.Println(err.Error())
 		return []byte{}, []byte("404")
@@ -77,7 +77,7 @@ func list(d string) (l []byte) {
 	files, _ := ioutil.ReadDir(d)
 	for _, file := range files {
 		p := filepath.Join(d, file.Name())
-		p = trimExt(strings.TrimPrefix(p, "Content\\"))
+		p = trimExt(strings.TrimPrefix(p, "Content"))
 		if file.IsDir() {
 			l = append(l, list(p)...)
 		} else {
