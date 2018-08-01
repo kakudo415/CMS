@@ -43,7 +43,7 @@ window.onload = () => {
 		};
 
 		const popState = (ev) => {
-			console.log(ev);
+			location.reload();
 		};
 
 		const ajaxGET = async (url) => {
