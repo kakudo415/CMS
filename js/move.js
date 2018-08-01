@@ -12,14 +12,13 @@ window.onload = () => {
 		Data: ""
 	};
 
-	const mouseOver = (ev) => {
-		console.log(ev.target.href);
+	const mouseEnter = (ev) => {
 		if (isLocal(ev.target.href)) {
 			ajaxGET(ev.target.href);
 		}
 	};
 
-	const mouseDown = (ev) => {
+	const mouseUp = (ev) => {
 		if (ev.button === 0) {
 			if (isLocal(ev.target.href)) {
 				let count = 0;
@@ -48,9 +47,11 @@ window.onload = () => {
 		if (Ajax.Path !== url && (Ajax.Time + 100) < Date.now()) {
 			await Ajax.XHR.abort();
 			Ajax.XHR.responseType = "document";
-			Ajax.XHR.onload = (ev) => {
+			Ajax.XHR.onloadstart = (ev) => {
 				Ajax.Path = url;
 				Ajax.Time = Date.now();
+			};
+			Ajax.XHR.onload = (ev) => {
 				Ajax.Data = ev.target.responseXML;
 			};
 			Ajax.XHR.open("GET", url + "?e=e", true);
@@ -61,6 +62,7 @@ window.onload = () => {
 	const movePage = () => {
 		document.title = Ajax.Data.title;
 		contentHTML.innerHTML = Ajax.Data.body.innerHTML;
+		addEvent();
 		history.pushState(null, null, Ajax.Path);
 	};
 
@@ -68,10 +70,13 @@ window.onload = () => {
 		return URL.startsWith("http://" + document.domain) || URL.startsWith("https://" + document.domain) || URL.startsWith("//" + document.domain) || URL.startsWith("/");
 	};
 
-	for (let tag of document.getElementsByTagName("a")) {
-		tag.onmouseover = mouseOver;
-		tag.onmousedown = mouseDown;
-		tag.onclick = () => { return false };
-	}
+	const addEvent = () => {
+		for (let tag of document.getElementsByTagName("a")) {
+			tag.onmouseenter = mouseEnter;
+			tag.onmouseup = mouseUp;
+			tag.onclick = () => { return false };
+		}
+	};
+	addEvent();
 	window.onpopstate = popState;
 };
