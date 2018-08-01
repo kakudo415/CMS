@@ -81,8 +81,8 @@ func list(d string) (l []byte) {
 		} else {
 			t, c := parseArticle(string(p))
 			var wrapUp string
-			if utf8.RuneCount(c) > 100 {
-				wrapUp = string([]rune(string(c))[:100])
+			if utf8.RuneCount(c) > 200 {
+				wrapUp = string([]rune(string(c))[:200])
 			} else {
 				wrapUp = string([]rune(string(c))[:utf8.RuneCount(c)])
 			}
