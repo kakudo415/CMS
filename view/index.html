@@ -6,7 +6,8 @@
 	<style>
 		html {
 			height: 100%;
-			font: normal normal normal 14px / 1em sans-serif;
+			color: #000A;
+			font: normal normal normal 14px sans-serif;
 		}
 		body {
 			height: 100%;
@@ -17,7 +18,6 @@
 			box-sizing: border-box;
 		}
 		a {
-			display: inline-block;
 			text-decoration: none;
 		}
 		#header {
@@ -42,9 +42,37 @@
 			padding: 3rem 0 0;
 			background: #F5F5F5;
 		}
-		#main>div {
+		#content {
 			width: 100%;
 			margin: 0 auto;
+		}
+		div.list {
+			padding: 0.5rem 1rem 1rem;
+			background: #FFF;
+			border-bottom: 1px solid #0002;
+		}
+		div.list>a {
+			color: #000A;
+			font: 150% / 1.5em sans-serif;
+		}
+		div.list>a:hover {
+			text-decoration: underline;
+		}
+		div.article {
+			padding: 0.5rem 1rem 1rem;
+			background: #FFF;
+		}
+		div.article>h1 {
+			margin: 0;
+			font: normal normal normal 175% / 1.5em sans-serif;
+		}
+		div.article>h2 {
+			margin: 0;
+			font: normal normal normal 150% / 1.5em sans-serif;
+		}
+		div.article>h3 {
+			margin: 0;
+			font: normal normal normal 125% / 1.5em sans-serif;
 		}
 		@media screen and (min-width: 480px) {
 			html {

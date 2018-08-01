@@ -30,6 +30,7 @@ func Full(w http.ResponseWriter, r *http.Request) {
 		title, content = []byte("Kakudo's Blog"), list("Content")
 	} else {
 		title, content = parseArticle(r.URL.Path)
+		content = []byte(`<div class="article">` + string(content) + `</div>`)
 	}
 	view = bytes.Replace(view, []byte("[TITLE]"), title, 1)
 	view = bytes.Replace(view, []byte("[BODY]"), content, 1)
@@ -43,6 +44,7 @@ func Essence(w http.ResponseWriter, r *http.Request) {
 		title, content = []byte("Kakudo's Blog"), list("Content")
 	} else {
 		title, content = parseArticle(r.URL.Path)
+		content = []byte(`<div class="article">` + string(content) + `</div>`)
 	}
 	min.Minify("text/html", w, bytes.NewReader(render(title, content)))
 }
@@ -86,7 +88,7 @@ func list(d string) (l []byte) {
 			}
 			wrapUp = strings.TrimPrefix(removeTag(wrapUp), string(t))
 			wrapUp = string([]rune(wrapUp)[utf8.RuneCount(t):])
-			l = append(l, []byte(`<a href="/`+trimExt(file.Name())+`"><h1>`+string(t)+`</h1><span>`+wrapUp+`</span></a>`)...)
+			l = append(l, []byte(`<div class="list"><a href="/`+trimExt(file.Name())+`">`+string(t)+`</a><div>`+wrapUp+`</div></div>`)...)
 		}
 	}
 	return l

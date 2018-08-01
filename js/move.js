@@ -21,9 +21,12 @@ window.onload = () => {
 	const mouseUp = (ev) => {
 		if (ev.button === 0) {
 			if (isLocal(ev.target.href)) {
+				if (Ajax.Path !== ev.target.href) {
+					ajaxGET(ev.target.href);
+				}
 				let count = 0;
 				let timer = setInterval(() => {
-					if (Ajax.Path === ev.target.href && Ajax.Data !== null) {
+					if (Ajax.Data !== null) {
 						movePage();
 						clearTimeout(timer);
 					}
@@ -50,6 +53,7 @@ window.onload = () => {
 			Ajax.XHR.onloadstart = (ev) => {
 				Ajax.Path = url;
 				Ajax.Time = Date.now();
+				Ajax.Data = null;
 			};
 			Ajax.XHR.onload = (ev) => {
 				Ajax.Data = ev.target.responseXML;
