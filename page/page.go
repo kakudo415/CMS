@@ -2,6 +2,7 @@ package page
 
 import (
 	"bytes"
+	"fmt"
 	"io/ioutil"
 	"net/http"
 	"path/filepath"
@@ -52,6 +53,7 @@ func Essence(w http.ResponseWriter, r *http.Request) {
 func parseArticle(filename string) ([]byte, []byte) {
 	file, err := ioutil.ReadFile(filepath.Clean("Content/" + filename + ".md"))
 	if err != nil {
+		fmt.Println(err.Error())
 		return []byte{}, []byte("404")
 	}
 	title := bytes.TrimPrefix(headerRegex.Find(file), []byte("# "))
