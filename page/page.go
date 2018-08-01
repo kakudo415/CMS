@@ -2,7 +2,6 @@ package page
 
 import (
 	"bytes"
-	"compress/gzip"
 	"io/ioutil"
 	"regexp"
 
@@ -44,15 +43,6 @@ func (r Response) Min() Response {
 	src := bytes.NewBuffer(r)
 	dst := bytes.NewBuffer([]byte{})
 	min.Minify("text/html", dst, src)
-	return dst.Bytes()
-}
-
-// Gzip func
-func (r Response) Gzip() Response {
-	dst := bytes.NewBuffer([]byte{})
-	gzw := gzip.NewWriter(dst)
-	gzw.Write(r)
-	gzw.Close()
 	return dst.Bytes()
 }
 

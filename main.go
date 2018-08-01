@@ -6,9 +6,10 @@ import (
 	"os"
 	"os/user"
 	"path/filepath"
-	"strings"
 
 	"./page"
+	"github.com/tdewolff/minify"
+	"github.com/tdewolff/minify/js"
 )
 
 func main() {
@@ -19,15 +20,14 @@ func main() {
 		}
 		v := page.Get(r.URL.Path, r.FormValue("r")).Min()
 
-		if strings.Contains(r.Header.Get("Accept-Encoding"), "gzip") {
-			w.Header().Set("Content-Encoding", "gzip")
-			v = v.Gzip()
-		}
-
-		w.Header().Set("Content-Type", "text/html")
 		w.Write(v)
 	})
-	http.Handle("/js/", http.StripPrefix("/js/", http.FileServer(http.Dir("js"))))
+
+	min := minify.New()
+	min.AddFunc("application/javascript", js.Minify)
+	min.AddFunc("application/x-javascript", js.Minify)
+	http.Handle("/js/", http.StripPrefix("/js/", min.Middleware(http.FileServer(http.Dir("js")))))
+
 	http.ListenAndServe("127.0.0.1:8000", nil)
 }
 
