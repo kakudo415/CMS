@@ -45,48 +45,39 @@
 		#content {
 			width: 100%;
 			margin: 0 auto;
+			background: #FFF;
 		}
-		div.list {
-			padding: 0.5rem 1rem 1rem;
+		#content>div {
+			padding: 1rem;
 			background: #FFF;
 			border-bottom: 1px solid #0002;
 		}
-		div.list>a {
+		.title {
 			color: #000A;
-			font: 150% / 1.5em sans-serif;
+			font: normal normal bold 175% / 1.5em sans-serif;
 		}
-		div.list>a:hover {
-			text-decoration: underline;
-		}
-		div.list>div {
-			margin: 0.5em 0 0;
-		}
-		div.article {
-			padding: 0.5rem 1rem 1rem;
-			background: #FFF;
-		}
-		div.article h1 {
+		#content h1 {
 			margin: 0 0 1em;
 			font: normal normal bold 175% / 1.5em sans-serif;
 		}
-		div.article h2 {
+		#content h2 {
 			margin: 1.5em 0 0;
 			font: normal normal bold 150% / 1.5em sans-serif;
 			border-bottom: 1px solid #0002;
 		}
-		div.article h3 {
+		#content h3 {
 			margin: 1.5em 0 0;
 			font: normal normal bold 125% / 1.5em sans-serif;
 			border-bottom: 1px solid #0002;
 		}
-		div.article a:hover {
+		#content a:hover {
 			text-decoration: underline;
 		}
-		div.article p {
+		#content p {
 			margin: 0.5rem 0;
 			line-height: 1.75rem;
 		}
-		div.article code {
+		#content code {
 			display: block;
 			margin: 0.5rem 0;
 			padding: 0.5rem 1rem;
@@ -129,7 +120,7 @@
 		</div>
 	</div>
 	<div id="main">
-		<div id="content">[BODY]</div>
+		<div id="content">[CONTENT]</div>
 	</div>
 </body>
 </html>

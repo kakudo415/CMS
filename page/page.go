@@ -2,117 +2,61 @@ package page
 
 import (
 	"bytes"
-	"fmt"
+	"compress/gzip"
 	"io/ioutil"
-	"net/http"
-	"path/filepath"
 	"regexp"
-	"strings"
-	"unicode/utf8"
 
+	"github.com/russross/blackfriday"
 	"github.com/tdewolff/minify"
 	"github.com/tdewolff/minify/css"
 	"github.com/tdewolff/minify/html"
-
-	"github.com/russross/blackfriday"
 )
 
-var indexHTML []byte
+// Response type
+type Response []byte
 
-var headerRegex = regexp.MustCompile(`# .+`)
-
+var hRegex = regexp.MustCompile(`# .+`)
 var min = minify.New()
 
-// Full Page Handler
-func Full(w http.ResponseWriter, r *http.Request) {
-	view := indexHTML
-	var title, content []byte
-	if r.URL.Path == "/" {
-		title, content = []byte("Kakudo's Blog"), list("Content")
+// Get Completed HTML
+func Get(p, t string) Response {
+	var v []byte
+	var e error
+	if t == "i" {
+		v, e = ioutil.ReadFile("view/instant.html")
 	} else {
-		title, content = parseArticle(r.URL.Path)
-		content = []byte(`<div class="article">` + string(content) + `</div>`)
+		v, e = ioutil.ReadFile("view/index.html")
 	}
-	view = bytes.Replace(view, []byte("[TITLE]"), title, 1)
-	view = bytes.Replace(view, []byte("[BODY]"), content, 1)
-	min.Minify("text/html", w, bytes.NewReader(view))
-}
-
-// Essence data
-func Essence(w http.ResponseWriter, r *http.Request) {
-	var title, content []byte
-	if r.URL.Path == "/" {
-		title, content = []byte("Kakudo's Blog"), list("Content")
-	} else {
-		title, content = parseArticle(r.URL.Path)
-		content = []byte(`<div class="article">` + string(content) + `</div>`)
+	c, e := ioutil.ReadFile("Content" + p + ".md")
+	if e != nil {
+		return []byte(`<!doctype html><html><body><h1>404</h1></body></html>`)
 	}
-	min.Minify("text/html", w, bytes.NewReader(render(title, content)))
+
+	title, content := bytes.TrimPrefix(hRegex.Find(c), []byte("# ")), blackfriday.MarkdownBasic(c)
+	v = bytes.Replace(v, []byte("[TITLE]"), title, 1)
+	v = bytes.Replace(v, []byte("[CONTENT]"), content, 1)
+
+	return v
 }
 
-func parseArticle(filename string) ([]byte, []byte) {
-	file, err := ioutil.ReadFile(filepath.Clean("Content" + filename + ".md"))
-	if err != nil {
-		fmt.Println(err.Error())
-		return []byte{}, []byte("404")
-	}
-	title := bytes.TrimPrefix(headerRegex.Find(file), []byte("# "))
-	content := blackfriday.MarkdownBasic(file)
-	if len(title) > 0 {
-		return title, content
-	}
-	return []byte(filename), content // <title>が見つからなかった場合応急処置としてファイル名を使う
+// Min func for HTML Minify
+func (r Response) Min() Response {
+	src := bytes.NewBuffer(r)
+	dst := bytes.NewBuffer([]byte{})
+	min.Minify("text/html", dst, src)
+	return dst.Bytes()
 }
 
-func render(title, body []byte) (html []byte) {
-	html = []byte("<!DOCTYPE html><html><meta charset=\"UTF-8\"><head><title>")
-	html = append(html, title...)
-	html = append(html, []byte("</title></head><body>")...)
-	html = append(html, body...)
-	html = append(html, []byte("</body></html>")...)
-	return html
-}
-
-func list(d string) (l []byte) {
-	files, _ := ioutil.ReadDir(d)
-	for _, file := range files {
-		p := filepath.Join(d, file.Name())
-		p = trimExt(strings.TrimPrefix(p, "Content"))
-		if file.IsDir() {
-			l = append(l, list(p)...)
-		} else {
-			t, c := parseArticle(string(p))
-			var wrapUp string
-			if utf8.RuneCount(c) > 200 {
-				wrapUp = string([]rune(string(c))[:200])
-			} else {
-				wrapUp = string([]rune(string(c))[:utf8.RuneCount(c)])
-			}
-			wrapUp = strings.TrimPrefix(removeTag(wrapUp), string(t))
-			wrapUp = string([]rune(wrapUp)[utf8.RuneCount(t):])
-			l = append(l, []byte(`<div class="list"><a href="/`+trimExt(file.Name())+`">`+string(t)+`</a><div>`+wrapUp+`</div></div>`)...)
-		}
-	}
-	return l
-}
-
-func removeTag(str string) string {
-	rep := regexp.MustCompile(`<("[^"]*"|'[^']*'|[^'">])*>`)
-	str = rep.ReplaceAllString(str, "")
-	return str
-}
-
-func trimExt(p string) string {
-	return strings.TrimSuffix(p, filepath.Ext(p))
+// Gzip func
+func (r Response) Gzip() Response {
+	dst := bytes.NewBuffer([]byte{})
+	gzw := gzip.NewWriter(dst)
+	gzw.Write(r)
+	gzw.Close()
+	return dst.Bytes()
 }
 
 func init() {
-	var err error
-	indexHTML, err = ioutil.ReadFile("view/index.html")
-	if err != nil {
-		panic(err)
-	}
-
 	min.AddFunc("text/html", html.Minify)
 	min.AddFunc("text/css", css.Minify)
 }

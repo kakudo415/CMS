@@ -1,8 +1,7 @@
 "use strict";
 
-
 window.onload = () => {
-	if (history.pushState && history.state !== undefined) {
+	const move = () => {
 		let contentHTML = document.getElementById("content");
 
 		let Ajax = {
@@ -58,7 +57,7 @@ window.onload = () => {
 				Ajax.XHR.onload = (ev) => {
 					Ajax.Data = ev.target.responseXML;
 				};
-				Ajax.XHR.open("GET", url + "?e=e", true);
+				Ajax.XHR.open("GET", url + "?r=i", true);
 				Ajax.XHR.send();
 			}
 		};
@@ -83,5 +82,9 @@ window.onload = () => {
 		};
 		window.onpopstate = popState;
 		addEvent();
+	};
+
+	if (history.pushState && history.state !== undefined) {
+		move();
 	}
 };
