@@ -33,7 +33,9 @@ func Get(p, t string) Response {
 	}
 
 	title, content := bytes.TrimPrefix(hRegex.Find(c), []byte("# ")), blackfriday.MarkdownBasic(c)
-	if p != "/index" {
+	if p == "/index" {
+		title = []byte(`Kakudo's Blog`)
+	} else {
 		content = []byte(`<div id="article">` + string(content) + `</div>`)
 	}
 	v = bytes.Replace(v, []byte("[TITLE]"), title, 1)
