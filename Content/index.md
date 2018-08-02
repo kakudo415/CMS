@@ -1,1 +1,1 @@
-<div><a href="/blog2gen" class="title">二代目のブログができました</a></div>
+<div class="item"><a href="/blog2gen">二代目のブログができました</a></div>

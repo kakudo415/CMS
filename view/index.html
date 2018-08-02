@@ -5,110 +5,112 @@
 	<title>[TITLE]</title>
 	<style>
 		html {
-			height: 100%;
-			color: #000A;
-			font: normal normal normal 14px sans-serif;
+			color: #000D;
+			background: #F5F5F5;
+			font: normal normal normal 14px / 1em sans-serif;
 		}
-		body {
-			height: 100%;
+		body, div, span, a, h1, h2, h3 {
 			margin: 0;
 			padding: 0;
-		}
-		div {
 			box-sizing: border-box;
+			font: inherit;
+			color: inherit;
+			text-decoration: inherit;
 		}
 		a {
-			text-decoration: none;
+			display: inline-block;
 		}
-		#header {
-			width: 100%;
-			padding: 0 1rem;
-			position: fixed;
-			top: 0;
-			background: #000A;
-		}
-		#header>div {
-			height: 3rem;
-			width: 100%;
-			margin: 0 auto;
-			display: flex;
-			align-items: center;
-		}
-		#header>div>a {
-			color: #FFFC;
-		}
-		#main {
-			min-height: 100%;
-			padding: 3rem 0 0;
-			background: #F5F5F5;
-		}
-		#content {
-			width: 100%;
-			margin: 0 auto;
-			background: #FFF;
-		}
-		#content>div {
-			padding: 1rem;
-			background: #FFF;
-			border-bottom: 1px solid #0002;
-		}
-		.title {
-			color: #000A;
-			font: normal normal bold 175% / 1.5em sans-serif;
-		}
-		#content h1 {
-			margin: 0 0 1em;
-			font: normal normal bold 175% / 1.5em sans-serif;
-		}
-		#content h2 {
-			margin: 1.5em 0 0;
-			font: normal normal bold 150% / 1.5em sans-serif;
-			border-bottom: 1px solid #0002;
-		}
-		#content h3 {
-			margin: 1.5em 0 0;
-			font: normal normal bold 125% / 1.5em sans-serif;
-			border-bottom: 1px solid #0002;
-		}
-		#content a:hover {
+		a:hover {
 			text-decoration: underline;
 		}
-		#content p {
-			margin: 0.5rem 0;
-			line-height: 1.75rem;
+
+		#header {
+			width: 100%;
+			position: fixed;
+			color: #FFFD;
+			background: #000D;
 		}
-		#content code {
-			display: block;
-			margin: 0.5rem 0;
-			padding: 0.5rem 1rem;
-			font-family: monospace;
-			line-height: 1.75rem;
-			color: #FFFC;
-			background: #252525;
-			overflow-x: scroll;
-			white-space: nowrap;
+			#header > div {
+				height: 3rem;
+				margin: 0 auto;
+				display: flex;
+				align-items: center;
+			}
+			#header a {
+				text-decoration: none;
+			}
+		#main {
+			margin: 0 auto;
+			padding: 4rem 0 1rem;
 		}
+		#content {
+			background: #FFF;
+		}
+
+			.item {
+				padding: 1rem;
+				background: #FFF;
+				border-bottom: 1px solid #0003;
+			}
+				.item > a {
+					font: normal normal bold 125% / 1em sans-serif;
+				}
+
+			#article {
+				padding: 1rem;
+			}
+				#article h1 {
+					margin: 0 0 1.5rem;
+					font: normal normal bold 150% / 1em sans-serif;
+				}
+				#article h2 {
+					margin: 0 0 1rem;
+					font: normal normal bold 125% / 1.5em sans-serif;
+					border-bottom: 1px solid #0003;
+				}
+				#article h3 {
+					margin: 0 0 1rem;
+					font: normal normal bold 112.5% / 1.5em sans-serif;
+					border-bottom: 1px solid #0001;
+				}
+				#article p {
+					margin: 1em 0;
+					line-height: 1.75em;
+				}
+				#article a {
+					color: #0077C8;
+				}
+				#article code {
+					padding: 0.5rem 1rem;
+					display: block;
+					white-space: pre;
+					overflow-x: scroll;
+					color: #F0F0F0;
+					background: #252525;
+				}
+
 		@media screen and (min-width: 480px) {
 			html {
 				font: normal normal normal 16px / 1em sans-serif;
 			}
+				#header > div {
+					width: calc(100% - 2rem);
+				}
 			#main {
-				padding: 4rem 1rem 1rem;
+				width: calc(100% - 2rem);
 			}
 		}
+
 		@media screen and (min-width: 960px) {
-			#header>div {
-				width: calc(960px - 2rem);
-			}
+				#header > div {
+					width: calc(960px - 2rem);
+				}
 			#main {
-				padding: 4rem 0 1rem;
-			}
-			#main>div {
 				width: calc(960px - 2rem);
 			}
 		}
 	</style>
-	
+
 	<script src="js/move.js" defer="defer"></script>
 
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -120,7 +122,9 @@
 		</div>
 	</div>
 	<div id="main">
-		<div id="content">[CONTENT]</div>
+		<div id="content">
+			[CONTENT]
+		</div>
 	</div>
 </body>
 </html>

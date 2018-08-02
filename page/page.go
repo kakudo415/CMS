@@ -22,16 +22,20 @@ func Get(p, t string) Response {
 	var v []byte
 	var e error
 	if t == "i" {
-		v, e = ioutil.ReadFile("view/instant.html")
+		v = []byte(`<!DOCTYPE html><html lang="ja"><head><meta charset="UTF-8"><title>[TITLE]</title></head><body>[CONTENT]</body></html>`)
 	} else {
 		v, e = ioutil.ReadFile("view/index.html")
 	}
+
 	c, e := ioutil.ReadFile("Content" + p + ".md")
 	if e != nil {
 		return []byte(`<!doctype html><html><body><h1>404</h1></body></html>`)
 	}
 
 	title, content := bytes.TrimPrefix(hRegex.Find(c), []byte("# ")), blackfriday.MarkdownBasic(c)
+	if p != "/index" {
+		content = []byte(`<div id="article">` + string(content) + `</div>`)
+	}
 	v = bytes.Replace(v, []byte("[TITLE]"), title, 1)
 	v = bytes.Replace(v, []byte("[CONTENT]"), content, 1)
 

@@ -5,7 +5,11 @@
 凝ったCSSを使わず、さらにHTMLに直接埋め込むことで１ファイルの転送をしています  
 HTMLの構造化した文書という作法においてはよくないかもしれませんが、早くなるはず・・  
 ## JavaScriptの遅延読み込み
-`<script src="hogehoge" defer="defer">`
+
+```
+<script src="hogehoge" defer="defer">
+```
+
 上のようにすることでJavaScriptを遅延読み込みすることができます  
 これによりページ読み込み時にJavaScriptを実行しないので、ファーストビュー表示が早くなります  
 ページ読み込み時に呼ばれなかったJavaScriptはページレンダリングが終わってから読み込まれます  
