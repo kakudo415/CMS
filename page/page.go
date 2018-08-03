@@ -56,5 +56,6 @@ func (r Response) Min() Response {
 func init() {
 	min.AddFunc("text/html", html.Minify)
 	min.AddFunc("text/css", css.Minify)
+	min.AddFunc("text/javascript", js.Minify)
 	min.AddFunc("application/javascript", js.Minify)
 }
