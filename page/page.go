@@ -9,6 +9,7 @@ import (
 	"github.com/tdewolff/minify"
 	"github.com/tdewolff/minify/css"
 	"github.com/tdewolff/minify/html"
+	"github.com/tdewolff/minify/js"
 )
 
 // Response type
@@ -55,4 +56,5 @@ func (r Response) Min() Response {
 func init() {
 	min.AddFunc("text/html", html.Minify)
 	min.AddFunc("text/css", css.Minify)
+	min.AddFunc("application/javascript", js.Minify)
 }
