@@ -9,6 +9,12 @@ if (history.pushState && history.state !== undefined) {
 		Data: null
 	};
 
+	const render = (title, content) => {
+		document.title = title;
+		contentHTML.innerHTML = content;
+		init();
+	};
+
 	const isLocal = (uri) => {
 		return uri.startsWith("http://" + document.domain) || uri.startsWith("https://" + document.domain) || uri.startsWith("//" + document.domain) || uri.startsWith("/");
 	};
@@ -46,10 +52,8 @@ if (history.pushState && history.state !== undefined) {
 				let timer = setInterval(() => {
 					if (Ajax.Data !== null) {
 						clearTimeout(timer);
-						document.title = Ajax.Data.title;
-						contentHTML.innerHTML = Ajax.Data.body.innerHTML;
+						render(Ajax.Data.title, Ajax.Data.body.innerHTML);
 						history.pushState(null, null, Ajax.Path);
-						aTagInit();
 					}
 					count++;
 					if (count > 300) {
@@ -63,7 +67,7 @@ if (history.pushState && history.state !== undefined) {
 		}
 	};
 
-	const aTagInit = () => {
+	const init = () => {
 		for (let tag of document.getElementsByTagName("a")) {
 			tag.onmouseover = mouseOver;
 			tag.onmousedown = mouseDown;
@@ -71,5 +75,9 @@ if (history.pushState && history.state !== undefined) {
 		}
 	};
 
-	aTagInit();
+	window.onpopstate = () => {
+		location.reload();
+	};
+
+	init();
 };
