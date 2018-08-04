@@ -26,7 +26,7 @@ func Get(p, t string) (v Response) {
 		v = Read("view/index.html")
 	}
 
-	c := Read("Content" + p + ".md")
+	c := Read("post" + p + ".md")
 
 	title, content := bytes.TrimPrefix(hRegex.Find(c), []byte("# ")), blackfriday.MarkdownBasic(c)
 	if p == "/index" {
