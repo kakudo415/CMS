@@ -18,19 +18,14 @@ var hRegex = regexp.MustCompile(`# .+`)
 var min = minify.New()
 
 // Get Completed HTML
-func Get(p, t string) Response {
-	var v []byte
-	var e error
+func Get(p, t string) (v Response) {
 	if t == "i" {
 		v = []byte(`<!DOCTYPE html><html lang="ja"><head><meta charset="UTF-8"><title>[TITLE]</title></head><body>[CONTENT]</body></html>`)
 	} else {
-		v, e = ioutil.ReadFile("view/index.html")
+		v = Read("view/index.html")
 	}
 
-	c, e := ioutil.ReadFile("Content" + p + ".md")
-	if e != nil {
-		return []byte(`<!doctype html><html><body><h1>404</h1></body></html>`)
-	}
+	c := Read("Content" + p + ".md")
 
 	title, content := bytes.TrimPrefix(hRegex.Find(c), []byte("# ")), blackfriday.MarkdownBasic(c)
 	if p == "/index" {
@@ -50,6 +45,15 @@ func (r Response) Min() Response {
 	dst := bytes.NewBuffer([]byte{})
 	min.Minify("text/html", dst, src)
 	return dst.Bytes()
+}
+
+// Read File func
+func Read(filename string) (c []byte) {
+	c, e := ioutil.ReadFile(filename)
+	if e != nil {
+		c = []byte(`<!doctype html><html><body><h1>404</h1></body></html>`)
+	}
+	return c
 }
 
 func init() {
