@@ -3,6 +3,7 @@ package page
 import (
 	"bytes"
 	"io/ioutil"
+	"os"
 	"regexp"
 
 	"github.com/russross/blackfriday"
@@ -49,6 +50,10 @@ func (r Response) Min() Response {
 
 // Read File func
 func Read(filename string) (c []byte) {
+	if r := os.Getenv("CMS_ROOT"); len(r) > 0 {
+		filename = r + filename
+	}
+
 	c, e := ioutil.ReadFile(filename)
 	if e != nil {
 		c = []byte(`<!doctype html><html><body><h1>404</h1></body></html>`)
