@@ -20,6 +20,7 @@ if (history.pushState && history.state !== undefined) {
 			Ajax.XHR.onloadstart = (ev) => {
 				Ajax.Path = uri;
 				Ajax.Time = Date.now();
+				Ajax.Data = null;
 			};
 			Ajax.XHR.onload = (ev) => {
 				Ajax.Data = ev.target.responseXML;
