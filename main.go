@@ -2,10 +2,12 @@ package main
 
 import (
 	"net/http"
+	"os"
 
 	"./page"
 	"github.com/tdewolff/minify"
 	"github.com/tdewolff/minify/js"
+	"github.com/tdewolff/minify/svg"
 )
 
 func main() {
@@ -19,9 +21,10 @@ func main() {
 	})
 
 	min := minify.New()
+	min.AddFunc("image/svg+xml", svg.Minify)
 	min.AddFunc("application/javascript", js.Minify)
 	min.AddFunc("application/x-javascript", js.Minify)
-	http.Handle("/js/", http.StripPrefix("/js/", min.Middleware(http.FileServer(http.Dir("js")))))
+	http.Handle("/static/", http.StripPrefix("/static/", min.Middleware(http.FileServer(http.Dir(os.Getenv("CMS_ROOT")+"static")))))
 
 	http.ListenAndServe("127.0.0.1:8000", nil)
 }
