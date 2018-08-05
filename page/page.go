@@ -52,7 +52,7 @@ func (r Response) Min() Response {
 func Read(filename string) (c []byte) {
 	c, e := ioutil.ReadFile(os.Getenv("CMS_ROOT") + filename)
 	if e != nil {
-		c = []byte(`<!doctype html><html><body><h1>404</h1></body></html>`)
+		c = []byte(`<h1>404</h1>`)
 	}
 	return c
 }
