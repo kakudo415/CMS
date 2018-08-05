@@ -11,8 +11,6 @@ import (
 )
 
 func main() {
-	go Resource()
-
 	http.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
 		if r.URL.Path == "/" {
 			r.URL.Path = "/index"
@@ -22,19 +20,13 @@ func main() {
 		w.Write(v)
 	})
 
-	http.ListenAndServe("127.0.0.1:8000", nil)
-}
-
-// Resource Server
-func Resource() {
 	min := minify.New()
 	min.AddFunc("image/svg+xml", svg.Minify)
 	min.AddFunc("application/javascript", js.Minify)
 	min.AddFunc("application/x-javascript", js.Minify)
+	http.Handle("/static/", min.Middleware(http.FileServer(http.Dir(dir()+"/"))))
 
-	mux := http.NewServeMux()
-	mux.Handle("/", min.Middleware(http.FileServer(http.Dir(dir()+"static"))))
-	http.ListenAndServe("127.0.0.1:10000", mux)
+	http.ListenAndServe("127.0.0.1:8000", nil)
 }
 
 func dir() string {
